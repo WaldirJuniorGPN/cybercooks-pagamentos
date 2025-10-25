@@ -13,7 +13,7 @@ public record Codigo(String value) {
 
         if (value.isBlank()) {
             throw new RegraDeNegocioValidation("Código não pode ser um valor vazio");
-        }
+        }   
 
         if (value.length() != LIMITE_CARACTERES) {
             throw new RegraDeNegocioValidation("Código deve ter exatamente 3 caractéres");

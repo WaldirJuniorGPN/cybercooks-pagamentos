@@ -1,7 +1,9 @@
 package br.com.bytecooks.pagamentos.model.valueobjects;
 
 import br.com.bytecooks.pagamentos.exception.RegraDeNegocioValidation;
+import jakarta.persistence.Embeddable;
 
+@Embeddable
 public record Numero(String value) {
 
     private static final int LIMITE_CARACTERES = 19;
