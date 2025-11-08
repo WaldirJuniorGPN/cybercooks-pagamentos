@@ -1,7 +1,8 @@
 package br.com.bytecooks.pagamentos.controller.dto.request;
 
-import br.com.bytecooks.pagamentos.model.enuns.StatusEnum;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
@@ -27,9 +28,6 @@ public record PagamentoRequest(
         @NotBlank(message = "O código não pode ser nulo ou estar em branco")
         @Length(max = 3, message = "O código precisa ter exatamente 3 caracteres")
         String codigo,
-
-        @NotNull(message = "O status não pode ser nulo")
-        StatusEnum status,
 
         @NotNull(message = "O ID do pedido não pode ser nulo")
         Long pedidoId,

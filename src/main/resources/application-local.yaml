@@ -26,3 +26,39 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     instance-id: ${spring.application.name}:${random.value}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 2s
+        recordExceptions:
+          - java.net.ConnectException
+          - java.util.concurrent.TimeoutException
+        ignoreExceptions:
+          - br.com.bytecooks.pagamentos.exception.RegraDeNegocioException
+
+  retry:
+    instances:
+      paymentService:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.net.ConnectException
+        ignoreExceptions:
+          - br.com.bytecooks.pagamentos.exception.RegraDeNegocioException
+
+  timelimiter:
+    instances:
+      paymentService:
+        timeoutDuration: 3s

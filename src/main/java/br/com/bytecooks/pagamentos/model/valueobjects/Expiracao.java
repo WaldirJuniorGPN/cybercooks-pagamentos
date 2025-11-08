@@ -1,6 +1,6 @@
 package br.com.bytecooks.pagamentos.model.valueobjects;
 
-import br.com.bytecooks.pagamentos.exception.RegraDeNegocioValidation;
+import br.com.bytecooks.pagamentos.exception.RegraDeNegocioException;
 
 public record Expiracao(String value) {
 
@@ -8,15 +8,15 @@ public record Expiracao(String value) {
 
     public Expiracao {
         if (value == null) {
-            throw new RegraDeNegocioValidation("Expiração não pode ser nulo");
+            throw new RegraDeNegocioException("Expiração não pode ser nulo");
         }
 
         if (value.isBlank()) {
-            throw new RegraDeNegocioValidation("Expiração não pode ser um valor vazio");
+            throw new RegraDeNegocioException("Expiração não pode ser um valor vazio");
         }
 
         if (value.length() > LIMITE_CARACTERES) {
-            throw new RegraDeNegocioValidation("Expiração não pode ter mais de 7 caracteres");
+            throw new RegraDeNegocioException("Expiração não pode ter mais de 7 caracteres");
         }
     }
 }

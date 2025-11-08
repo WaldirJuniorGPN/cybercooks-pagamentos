@@ -3,6 +3,7 @@ package br.com.bytecooks.pagamentos.controller.v1;
 import br.com.bytecooks.pagamentos.controller.dto.request.PagamentoRequest;
 import br.com.bytecooks.pagamentos.controller.dto.response.PagamentoResponse;
 import br.com.bytecooks.pagamentos.service.PagamentoService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -79,5 +80,23 @@ public class PagamentoController {
         var response = pagamentoService.atualizar(id, request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Confirmar Pagamento",
+            description = "Altera o status para CONFIRMADO. Caso o MS de Pedido esteja inacessível, o status será alterado para CONFIRMADO_SEM_INTEGRACAO "
+    )
+    @PatchMapping("/{id}/confirmar")
+    @CircuitBreaker(name = "paymentService", fallbackMethod = "pagamentoAutorizadoComIntegracaoPendente")
+    public ResponseEntity<Void> confirmarPagamento(@PathVariable Long id) {
+        pagamentoService.confirmarPagamento(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    public ResponseEntity<Void> pagamentoAutorizadoComIntegracaoPendente(Long id, Exception e) {
+        pagamentoService.autorizarSemIntegracao(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -16,4 +16,8 @@ public interface PagamentoService {
     PagamentoResponse atualizar(Long id, PagamentoRequest pagamentoRequest);
 
     PagamentoResponse criar(PagamentoRequest pagamentoRequest);
+
+    void confirmarPagamento(Long id);
+
+    void autorizarSemIntegracao(Long id);
 }

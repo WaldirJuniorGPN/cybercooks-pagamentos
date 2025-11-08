@@ -1,6 +1,6 @@
 package br.com.bytecooks.pagamentos.model.valueobjects;
 
-import br.com.bytecooks.pagamentos.exception.RegraDeNegocioValidation;
+import br.com.bytecooks.pagamentos.exception.RegraDeNegocioException;
 
 public record Codigo(String value) {
 
@@ -8,15 +8,15 @@ public record Codigo(String value) {
 
     public Codigo {
         if (value == null) {
-            throw new RegraDeNegocioValidation("Código não pode ser nulo");
+            throw new RegraDeNegocioException("Código não pode ser nulo");
         }
 
         if (value.isBlank()) {
-            throw new RegraDeNegocioValidation("Código não pode ser um valor vazio");
+            throw new RegraDeNegocioException("Código não pode ser um valor vazio");
         }   
 
         if (value.length() != LIMITE_CARACTERES) {
-            throw new RegraDeNegocioValidation("Código deve ter exatamente 3 caractéres");
+            throw new RegraDeNegocioException("Código deve ter exatamente 3 caractéres");
         }
     }
 }

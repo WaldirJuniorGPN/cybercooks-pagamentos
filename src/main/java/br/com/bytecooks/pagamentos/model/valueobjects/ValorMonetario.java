@@ -1,6 +1,6 @@
 package br.com.bytecooks.pagamentos.model.valueobjects;
 
-import br.com.bytecooks.pagamentos.exception.RegraDeNegocioValidation;
+import br.com.bytecooks.pagamentos.exception.RegraDeNegocioException;
 import jakarta.persistence.Embeddable;
 
 import java.math.BigDecimal;
@@ -16,11 +16,11 @@ public record ValorMonetario(BigDecimal valor) {
 
     private void validar(BigDecimal valor) {
         if (valor == null) {
-            throw new RegraDeNegocioValidation("O valor não pode ser nulo");
+            throw new RegraDeNegocioException("O valor não pode ser nulo");
         }
 
         if (valor.compareTo(BigDecimal.ZERO) < 0) {
-            throw new RegraDeNegocioValidation("O valor não pode ser negativo");
+            throw new RegraDeNegocioException("O valor não pode ser negativo");
         }
     }
 

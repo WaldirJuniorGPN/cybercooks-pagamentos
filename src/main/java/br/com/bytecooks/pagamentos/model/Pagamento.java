@@ -4,15 +4,19 @@ import br.com.bytecooks.pagamentos.model.enuns.StatusEnum;
 import br.com.bytecooks.pagamentos.model.valueobjects.*;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.math.BigDecimal;
 
+import static br.com.bytecooks.pagamentos.model.enuns.StatusEnum.CONFIRMADO;
+import static br.com.bytecooks.pagamentos.model.enuns.StatusEnum.CONFIRMADO_SEM_INTEGRACAO;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity(name = "Pagamento")
 @Table(name = "pagamentos")
+@DynamicUpdate
 @NoArgsConstructor(access = PROTECTED)
 public class Pagamento {
 
@@ -136,11 +140,6 @@ public class Pagamento {
         return this;
     }
 
-    public Pagamento atualizarStatus(StatusEnum status) {
-        this.status = status;
-        return this;
-    }
-
     public Pagamento atualizarPedidoId(PedidoId pedidoId) {
         this.pedidoId = pedidoId;
         return this;
@@ -149,5 +148,13 @@ public class Pagamento {
     public Pagamento atualizarFormaDePagamentoId(FormaDePagamentoId formaDePagamentoId) {
         this.formaDePagamentoId = formaDePagamentoId;
         return this;
+    }
+
+    public void confirmarPagamento() {
+        this.status = CONFIRMADO;
+    }
+
+    public void confirmarPagamentoSemIntegracao() {
+        this.status = CONFIRMADO_SEM_INTEGRACAO;
     }
 }

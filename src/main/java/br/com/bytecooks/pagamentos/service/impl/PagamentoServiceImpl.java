@@ -2,7 +2,8 @@ package br.com.bytecooks.pagamentos.service.impl;
 
 import br.com.bytecooks.pagamentos.controller.dto.request.PagamentoRequest;
 import br.com.bytecooks.pagamentos.controller.dto.response.PagamentoResponse;
-import br.com.bytecooks.pagamentos.exception.RegraDeNegocioValidation;
+import br.com.bytecooks.pagamentos.exception.RegraDeNegocioException;
+import br.com.bytecooks.pagamentos.infra.http.PedidoClient;
 import br.com.bytecooks.pagamentos.infra.repository.PagamentoRepository;
 import br.com.bytecooks.pagamentos.model.Pagamento;
 import br.com.bytecooks.pagamentos.model.PagamentoMapper;
@@ -13,12 +14,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import static br.com.bytecooks.pagamentos.model.enuns.StatusEnum.CRIADO;
+
 @Service
 @RequiredArgsConstructor
 public class PagamentoServiceImpl implements PagamentoService {
 
     private final PagamentoRepository repository;
     private final PagamentoMapper mapper;
+    private final PedidoClient pedidoClient;
 
     @Override
     public Page<PagamentoResponse> obterTodos(Pageable paginacao) {
@@ -53,7 +57,6 @@ public class PagamentoServiceImpl implements PagamentoService {
         var numero = new Numero(pagamentoRequest.numero());
         var expiracao = new Expiracao(pagamentoRequest.expiracao());
         var codigo = new Codigo(pagamentoRequest.codigo());
-        var status = pagamentoRequest.status();
         var pedidoId = new PedidoId(pagamentoRequest.pedidoId());
         var formaDePagamentoId = new FormaDePagamentoId(pagamentoRequest.formaDePagamentoId());
         var pagamento = Pagamento.builder()
@@ -62,7 +65,7 @@ public class PagamentoServiceImpl implements PagamentoService {
                 .numero(numero)
                 .expedicao(expiracao)
                 .codigo(codigo)
-                .statusEnum(status)
+                .statusEnum(CRIADO)
                 .pedidoId(pedidoId)
                 .formaDePagamentoId(formaDePagamentoId)
                 .build();
@@ -70,9 +73,24 @@ public class PagamentoServiceImpl implements PagamentoService {
         return mapper.mapearPagamentoToPagamentoResponse(pagamento);
     }
 
+    @Override
+    public void confirmarPagamento(Long id) {
+        var pagamento = fazerBuscaNoBanco(id);
+        pagamento.confirmarPagamento();
+        repository.save(pagamento);
+        pedidoClient.atualizaPagamento(pagamento.obterpedidoId());
+    }
+
+    @Override
+    public void autorizarSemIntegracao(Long id) {
+        var pagamento = fazerBuscaNoBanco(id);
+        pagamento.confirmarPagamentoSemIntegracao();
+        repository.save(pagamento);
+    }
+
     private Pagamento fazerBuscaNoBanco(Long id) {
         return repository.findById(id)
                 .orElseThrow(
-                        () -> new RegraDeNegocioValidation(String.format("Nenhum pagamento com ID %d foi encontrado", id)));
+                        () -> new RegraDeNegocioException(String.format("Nenhum pagamento com ID %d foi encontrado", id)));
     }
 }

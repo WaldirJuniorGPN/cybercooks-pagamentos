@@ -34,7 +34,6 @@ public class PagamentoMapper {
                 .atualizarNumero(numero)
                 .atualizarExpiracao(expiracao)
                 .atualizarCodigo(codigo)
-                .atualizarStatus(pagamentoRequest.status())
                 .atualizarPedidoId(pedidoId)
                 .atualizarFormaDePagamentoId(formaDePagamentoId);
     }

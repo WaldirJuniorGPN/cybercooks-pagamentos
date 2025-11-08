@@ -1,6 +1,6 @@
 package br.com.bytecooks.pagamentos.model.valueobjects;
 
-import br.com.bytecooks.pagamentos.exception.RegraDeNegocioValidation;
+import br.com.bytecooks.pagamentos.exception.RegraDeNegocioException;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
@@ -10,15 +10,15 @@ public record Numero(String value) {
 
     public Numero {
         if (value == null) {
-            throw new RegraDeNegocioValidation("Número não pode ser nulo");
+            throw new RegraDeNegocioException("Número não pode ser nulo");
         }
 
         if (value.isBlank()) {
-            throw new RegraDeNegocioValidation("Número não pode ser um valor vazio");
+            throw new RegraDeNegocioException("Número não pode ser um valor vazio");
         }
 
         if (value.length() > LIMITE_CARACTERES) {
-            throw new RegraDeNegocioValidation("Número não pode ter mais de 19 caracteres");
+            throw new RegraDeNegocioException("Número não pode ter mais de 19 caracteres");
         }
     }
 }
